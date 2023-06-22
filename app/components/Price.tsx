@@ -1,5 +1,5 @@
 import React from "react";
-import PriceType from "../page";
+import { PriceType } from "../page";
 
 export default function Price({ price }: { price: PriceType }) {
   const renderPrice = () => {
