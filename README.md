@@ -1,6 +1,12 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+# Launch the node
+
+You can cargo build --release this repository : https://github.com/Matthiewm23/UnitChainRestaurant.
+
+Then launch the node with ./target/release/node-unitchain --dev. 
+
+# Run your front end
 
 First, run the development server:
 
@@ -11,23 +17,14 @@ yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-## Learn More
+# The logic
 
-To learn more about Next.js, take a look at the following resources:
+With the genesis config file of the chain, 5 restaurants, few reviews and menu have been initialize. They will be display in the application. 
+You can use polkadotjs app to add through extrinsics reviews, restaurant. Easely changes could make possible to add menu. 
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+At the moment, there is a little hack to allow someone to book through the website, this will be corrected : we just need to change the availibity through a new extrinsic in the chain (currently, you could book several times the same thing). 
 
 ## Deploy on Vercel
 
