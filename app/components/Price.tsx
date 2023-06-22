@@ -1,15 +1,15 @@
-import { PRICE } from "@prisma/client";
 import React from "react";
+import PriceType from "../page";
 
-export default function Price({ price }: { price: PRICE }) {
+export default function Price({ price }: { price: PriceType }) {
   const renderPrice = () => {
-    if (price === PRICE.CHEAP) {
+    if (price === PriceType.CHEAP) {
       return (
         <>
           <span>$$</span> <span className="text-gray-400">$$</span>
         </>
       );
-    } else if (price === PRICE.REGULAR) {
+    } else if (price === PriceType.REGULAR) {
       return (
         <>
           <span>$$$</span> <span className="text-gray-400">$</span>
