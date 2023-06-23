@@ -1,4 +1,6 @@
-import { Cuisine, Location, PRICE } from "@prisma/client";
+// import { Cuisine, Location, PRICE } from "@prisma/client";
+import { PriceType } from "../../page";
+
 import Link from "next/link";
 
 export default function SearchSideBar({
@@ -8,21 +10,21 @@ export default function SearchSideBar({
 }: {
   // locations: Location[];
   // cuisines: Cuisine[];
-  searchParams: { city?: string; cuisine?: string; price?: PRICE };
+  searchParams: { city?: string; cuisine?: string; price?: PriceType };
 }) {
   const prices = [
     {
-      price: PRICE.CHEAP,
+      price: PriceType.CHEAP,
       label: "$",
       className: "border w-full text-reg text-center font-light rounded-l p-2",
     },
     {
-      price: PRICE.REGULAR,
+      price: PriceType.REGULAR,
       label: "$$",
       className: "border w-full text-reg text-center font-light p-2",
     },
     {
-      price: PRICE.EXPENSIVE,
+      price: PriceType.EXPENSIVE,
       label: "$$$",
       className: "border w-full text-reg text-center font-light rounded-r p-2",
     },
