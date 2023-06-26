@@ -2,6 +2,7 @@
 import { PrismaClient } from "@prisma/client";
 import { notFound } from "next/navigation";
 import Form from "./components/Form";
+import Review from "../../restaurant/[slug]/components/Review";
 import Header from "./components/Header";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { useEffect, useState } from "react";

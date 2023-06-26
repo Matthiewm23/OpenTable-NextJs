@@ -3,6 +3,10 @@
 import { CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import useReservation from "../../../../hooks/useReservation";
+import { stringToU8a } from "@polkadot/util";
+import { web3FromSource } from "@polkadot/extension-dapp";
+import { waitReady } from "@polkadot/wasm-crypto";
+import { useSubstrateConnection } from "ts-substrate-lib";
 
 export default function Form({
   slug,
@@ -26,17 +30,21 @@ export default function Form({
   const [didBook, setDidBook] = useState(false);
   const { error, loading, createReservation } = useReservation();
 
-  useEffect(() => {
-    if (
-      inputs.bookerFirstName &&
-      inputs.bookerLastName &&
-      inputs.bookerEmail &&
-      inputs.bookerPhone
-    ) {
-      return setDisabled(false);
-    }
-    return setDisabled(true);
-  }, [inputs]);
+  // const { substrateConnection } = useSubstrateConnection();
+
+  // const { apiState, keyringState, api, currentAccount } = substrateConnection;
+
+  // useEffect(() => {
+  //   if (
+  //     inputs.bookerFirstName &&
+  //     inputs.bookerLastName &&
+  //     inputs.bookerEmail &&
+  //     inputs.bookerPhone
+  //   ) {
+  //     return setDisabled(false);
+  //   }
+  //   return setDisabled(true);
+  // }, [inputs]);
 
   const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputs({
@@ -45,21 +53,65 @@ export default function Form({
     });
   };
 
-  const handleClick = async () => {
-    const booking = await createReservation({
-      slug,
-      partySize,
-      time,
-      day,
-      bookerFirstName: inputs.bookerFirstName,
-      bookerLastName: inputs.bookerLastName,
-      bookerEmail: inputs.bookerEmail,
-      bookerOccasion: inputs.bookerOccasion,
-      bookerPhone: inputs.bookerPhone,
-      bookerRequest: inputs.bookerRequest,
-      setDidBook,
-    });
-  };
+  // async function getFromAcct() {
+  //   const {
+  //     address,
+  //     meta: { source, isInjected },
+  //   } = currentAccount;
+
+  //   if (!isInjected) {
+  //     return [currentAccount];
+  //   }
+
+  //   const injector = await web3FromSource(source);
+  //   return [address, { signer: injector.signer }];
+  // }
+
+  // const handleClick = async () => {
+  //   alert("Transaction en cours, veuillez patienter.");
+
+  //   const from = await getFromAcct();
+
+  //   try {
+  //     const restaurantSlugBytes = stringToU8a(restaurantSlug);
+  //     const dayBytes = stringToU8a(day);
+  //     const timeBytes = stringToU8a(time);
+
+  //     await api.tx.restaurant
+  //       .makeReservation(restaurantSlugBytes, partySize, dayBytes, timeBytes)
+  //       .signAndSend(...from);
+  //   } catch (error) {
+  //     alert(error.toString());
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   if (apiState === "READY" && keyringState === "READY") {
+  //     const getInfo = async () => {
+  //       const keyringOptions = keyring.getPairs().map((account) => ({
+  //         key: account.address,
+  //         value: account.address,
+  //         text: account.meta.name.toUpperCase(),
+  //         icon: "user",
+  //       }));
+
+  //       const initialAddress =
+  //         keyringOptions.length > 0 ? keyringOptions[0].value : "";
+
+  //       !currentAccount &&
+  //         initialAddress.length > 0 &&
+  //         setCurrentAccount(keyring.getPair(initialAddress));
+
+  //       if (currentAccount) {
+  //         setNewTokenData((prevData) => ({
+  //           ...prevData,
+  //           admin: currentAccount.address,
+  //         }));
+  //       }
+  //     };
+  //     getInfo();
+  //   }
+  // }, [currentAccount, apiState, keyringState]);
 
   return (
     <div className="mt-10 flex flex-wrap justify-between w-[660px]">
@@ -121,7 +173,7 @@ export default function Form({
           <button
             disabled={disabled || loading}
             className="bg-red-600 w-full p-3 text-white font-bold rounded disabled:bg-gray-300"
-            onClick={handleClick}
+            // onClick={handleClick}
           >
             {loading ? (
               <CircularProgress color="inherit" />

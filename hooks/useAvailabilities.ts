@@ -36,13 +36,21 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { useState, useEffect } from "react";
 
+
 export default function useAvailabilities() {
+
+
+
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [data, setData] = useState<{ time: string; available: boolean }[]>([]);
 
   const [api, setApi] = useState(null);
   const [apiState, setApiState] = useState("CONNECTING");
+
+
+
 
   useEffect(() => {
     const connect = async () => {

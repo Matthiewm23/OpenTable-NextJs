@@ -8,6 +8,7 @@ import Title from "./components/Title";
 import ReservationCard from "./components/ReservationCard";
 import { TextDecoder } from "text-encoding";
 import { RestaurantCardType } from "../page";
+import ButtonReview from "./components/ButtonReview";
 
 interface Props {
   restaurant: RestaurantCardType;
@@ -104,15 +105,20 @@ export default function RestaurantDetails({
           <p key={index}>
             {review.firstname} {review.lastname} {" -"}
             {review.text}
+            <br />
+            <br />
           </p>
         ))}
       </div>
       <div className="w-[27%] relative text-reg">
-        <ReservationCard
-          openTime={restaurant.open_time}
-          closeTime={restaurant.close_time}
-          slug={restaurant.slug}
-        />
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <ReservationCard
+            openTime={restaurant.open_time}
+            closeTime={restaurant.close_time}
+            slug={restaurant.slug}
+          />
+          <ButtonReview></ButtonReview>
+        </div>
       </div>
     </>
   );
