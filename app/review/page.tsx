@@ -7,11 +7,27 @@ import { web3FromSource } from "@polkadot/extension-dapp";
 import { waitReady } from "@polkadot/wasm-crypto";
 import { useSubstrateConnection } from "ts-substrate-lib";
 
-export default function Form() {
+import { ApiPromise, WsProvider } from "@polkadot/api";
+
+export enum PriceType {
+  REGULAR = "REGULAR",
+  CHEAP = "CHEAP",
+  EXPENSIVE = "EXPENSIVE",
+}
+
+export default function Form({
+  searchParams,
+}: {
+  searchParams: { slug: string; id: number };
+}) {
+  const [api, setApi] = useState(null);
+  const [account, setAccount] = useState(null);
+
   const [inputs, setInputs] = useState({
     FirstName: "",
     LastName: "",
     description: "",
+    rating: "",
   });
   const [disabled, setDisabled] = useState(false);
   const [didBook, setDidBook] = useState(false);
@@ -21,6 +37,69 @@ export default function Form() {
       ...inputs,
       [e.target.name]: e.target.value,
     });
+  };
+
+  useEffect(() => {
+    async function init() {
+      const { web3Enable, web3Accounts } = await import(
+        "@polkadot/extension-dapp"
+      );
+      const { ApiPromise, WsProvider } = await import("@polkadot/api");
+
+      const provider = new WsProvider("ws://localhost:9944");
+      const api = await ApiPromise.create({ provider });
+
+      const allInjected = await web3Enable("My dapp");
+      if (allInjected.length === 0) {
+        console.error("No Account found");
+        return;
+      }
+
+      const allAccounts = await web3Accounts();
+      if (allAccounts.length === 0) {
+        console.error("No Account found");
+        return;
+      }
+
+      const account = allAccounts[0];
+
+      setApi(api);
+      setAccount(account);
+    }
+
+    init();
+  }, []);
+
+  const handleClick = async () => {
+    if (!api || !account) {
+      console.error("API ou compte non initialisé");
+      return;
+    }
+
+    const injector = await web3FromSource(account.meta.source);
+    const textEncoder = new TextEncoder();
+    const helloBytes = textEncoder.encode(
+      "hello coiment ca va j'espre ca va marcheeeeeeeeeeeeeeeeeeeeeeeeeer"
+    );
+    const addreview = api.tx.restaurant.addReview(
+      textEncoder.encode(searchParams.slug),
+      textEncoder.encode(inputs.FirstName),
+      textEncoder.encode(inputs.LastName),
+      textEncoder.encode(inputs.description),
+      inputs.rating,
+      searchParams.id,
+      1
+    );
+
+    try {
+      const hash = await addreview.signAndSend(account.address, {
+        signer: injector.signer,
+      });
+
+      console.log("The hash : ", hash.toHex());
+    } catch (error) {
+      console.error("Error sending the transaction", error);
+    }
   };
 
   return (
@@ -54,6 +133,16 @@ export default function Form() {
             value={inputs.description}
             placeholder="Description"
             name="description"
+            onChange={handleChangeInput}
+          />
+          <input
+            type="number"
+            className="border rounded p-3 w-80 mb-4"
+            value={inputs.rating}
+            placeholder="Rating (1-5)"
+            name="rating"
+            min="1"
+            max="5"
             onChange={handleChangeInput}
           />
           <button

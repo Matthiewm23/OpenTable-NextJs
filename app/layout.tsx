@@ -1,31 +1,66 @@
-import NavBar from "./components/NavBar";
-import "./globals.css";
-import "react-datepicker/dist/react-datepicker.css";
-import { appWithTranslation } from "next-i18next";
+// import NavBar from "./components/NavBar";
+// import "./globals.css";
+// import "react-datepicker/dist/react-datepicker.css";
+// import { appWithTranslation } from "next-i18next";
 
-// import dynamic from "next/dynamic";
+// // import dynamic from "next/dynamic";
 
-// interface Configurations {
-//   wssBaseUrl: string;
+// // interface Configurations {
+// //   wssBaseUrl: string;
+// // }
+
+// // export const configs: Configurations = {
+// //   wssBaseUrl: process.env.NEXT_PUBLIC_BASE_API_URL ?? "ws://127.0.0.1:9944",
+// // };
+
+// // const chainConfigs = {
+// //   providerSocket: configs.wssBaseUrl,
+// //   appName: "Unit Restaurant Network",
+// // };
+
+// // const SubstrateConnectionLayout = dynamic(
+// //   () =>
+// //     import("ts-substrate-lib").then((data) => data.SubstrateConnectionLayout),
+// //   {
+// //     ssr: false,
+// //     loading: () => <></>,
+// //   }
+// // );
+
+// export default function RootLayout({
+//   children,
+// }: {
+//   children: React.ReactNode;
+// }) {
+//   return (
+//     // <SubstrateConnectionLayout configs={chainConfigs}>
+//     <html lang="en">
+//       <head />
+//       <body>
+//         <main className="bg-gray-100 min-h-screen w-screen">
+//           <main className="max-w-screen-2xl m-auto bg-white">
+//             <NavBar />
+//             {children}
+//           </main>
+//         </main>
+//       </body>
+//     </html>
+//     // </SubstrateConnectionLayout>
+//   );
 // }
 
-// export const configs: Configurations = {
-//   wssBaseUrl: process.env.NEXT_PUBLIC_BASE_API_URL ?? "ws://127.0.0.1:9944",
-// };
+"use client";
 
-// const chainConfigs = {
-//   providerSocket: configs.wssBaseUrl,
-//   appName: "Unit Restaurant Network",
-// };
+import "./globals.css";
+import { Inter } from "next/font/google";
+import dynamic from "next/dynamic";
 
-// const SubstrateConnectionLayout = dynamic(
-//   () =>
-//     import("ts-substrate-lib").then((data) => data.SubstrateConnectionLayout),
-//   {
-//     ssr: false,
-//     loading: () => <></>,
-//   }
-// );
+const inter = Inter({ subsets: ["latin"] });
+
+const chainConfigs = {
+  providerSocket: "ws://127.0.0.1:9944",
+  appName: "Unit Network",
+};
 
 export default function RootLayout({
   children,
@@ -33,18 +68,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    // <SubstrateConnectionLayout configs={chainConfigs}>
     <html lang="en">
-      <head />
-      <body>
-        <main className="bg-gray-100 min-h-screen w-screen">
-          <main className="max-w-screen-2xl m-auto bg-white">
-            <NavBar />
-            {children}
-          </main>
-        </main>
-      </body>
+      <body className={inter.className}>{children}</body>
     </html>
-    // </SubstrateConnectionLayout>
   );
 }

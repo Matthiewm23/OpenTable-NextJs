@@ -7,7 +7,7 @@ import RestaurantNavBar from "./components/RestaurantNavBar";
 import Title from "./components/Title";
 import ReservationCard from "./components/ReservationCard";
 import { TextDecoder } from "text-encoding";
-import { RestaurantCardType } from "../page";
+import { RestaurantCardType } from "../../page";
 import ButtonReview from "./components/ButtonReview";
 
 interface Props {
@@ -117,7 +117,10 @@ export default function RestaurantDetails({
             closeTime={restaurant.close_time}
             slug={restaurant.slug}
           />
-          <ButtonReview></ButtonReview>
+          <ButtonReview
+            slug={restaurant.slug}
+            id={restaurant.id}
+          ></ButtonReview>
         </div>
       </div>
     </>
