@@ -7,6 +7,7 @@ import { stringToU8a } from "@polkadot/util";
 import { web3FromSource } from "@polkadot/extension-dapp";
 import { waitReady } from "@polkadot/wasm-crypto";
 import { useSubstrateConnection } from "ts-substrate-lib";
+import { Keyring } from "@polkadot/keyring";
 
 export default function Form({
   slug,
@@ -29,22 +30,26 @@ export default function Form({
   const [disabled, setDisabled] = useState(true);
   const [didBook, setDidBook] = useState(false);
   const { error, loading, createReservation } = useReservation();
+  const [api, setApi] = useState(null);
+  const [account, setAccount] = useState(null);
+
+  const [reservationMessage, setReservationMessage] = useState("");
 
   // const { substrateConnection } = useSubstrateConnection();
 
   // const { apiState, keyringState, api, currentAccount } = substrateConnection;
 
-  // useEffect(() => {
-  //   if (
-  //     inputs.bookerFirstName &&
-  //     inputs.bookerLastName &&
-  //     inputs.bookerEmail &&
-  //     inputs.bookerPhone
-  //   ) {
-  //     return setDisabled(false);
-  //   }
-  //   return setDisabled(true);
-  // }, [inputs]);
+  useEffect(() => {
+    if (
+      inputs.bookerFirstName &&
+      inputs.bookerLastName &&
+      inputs.bookerEmail &&
+      inputs.bookerPhone
+    ) {
+      return setDisabled(false);
+    }
+    return setDisabled(true);
+  }, [inputs]);
 
   const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputs({
@@ -53,65 +58,54 @@ export default function Form({
     });
   };
 
-  // async function getFromAcct() {
-  //   const {
-  //     address,
-  //     meta: { source, isInjected },
-  //   } = currentAccount;
+  useEffect(() => {
+    async function init() {
+      const { ApiPromise, WsProvider } = await import("@polkadot/api");
 
-  //   if (!isInjected) {
-  //     return [currentAccount];
-  //   }
+      const provider = new WsProvider("ws://localhost:9944");
+      const api = await ApiPromise.create({ provider });
 
-  //   const injector = await web3FromSource(source);
-  //   return [address, { signer: injector.signer }];
-  // }
+      // Crée un compte Alice.
+      const keyring = new Keyring({ type: "sr25519" });
+      const account = keyring.addFromUri("//Alice");
 
-  // const handleClick = async () => {
-  //   alert("Transaction en cours, veuillez patienter.");
+      setApi(api);
+      setAccount(account);
+    }
 
-  //   const from = await getFromAcct();
+    init();
+  }, []);
 
-  //   try {
-  //     const restaurantSlugBytes = stringToU8a(restaurantSlug);
-  //     const dayBytes = stringToU8a(day);
-  //     const timeBytes = stringToU8a(time);
+  const handleClick = async () => {
+    if (!api || !account) {
+      console.error("API not initilized");
+      return;
+    }
+    setReservationMessage("");
 
-  //     await api.tx.restaurant
-  //       .makeReservation(restaurantSlugBytes, partySize, dayBytes, timeBytes)
-  //       .signAndSend(...from);
-  //   } catch (error) {
-  //     alert(error.toString());
-  //   }
-  // };
+    // const injector = await web3FromSource(account.meta.source);
+    const textEncoder = new TextEncoder();
+    const helloBytes = textEncoder.encode("test".padEnd(35, "0"));
 
-  // useEffect(() => {
-  //   if (apiState === "READY" && keyringState === "READY") {
-  //     const getInfo = async () => {
-  //       const keyringOptions = keyring.getPairs().map((account) => ({
-  //         key: account.address,
-  //         value: account.address,
-  //         text: account.meta.name.toUpperCase(),
-  //         icon: "user",
-  //       }));
+    const addreservation = api.tx.restaurant.addReservation(
+      // textEncoder.encode(searchParams.slug),
+      helloBytes,
+      helloBytes,
+      helloBytes,
+      2
+    );
 
-  //       const initialAddress =
-  //         keyringOptions.length > 0 ? keyringOptions[0].value : "";
+    try {
+      const hash = await addreservation.signAndSend(account, {
+        signer: account.signer,
+      });
 
-  //       !currentAccount &&
-  //         initialAddress.length > 0 &&
-  //         setCurrentAccount(keyring.getPair(initialAddress));
-
-  //       if (currentAccount) {
-  //         setNewTokenData((prevData) => ({
-  //           ...prevData,
-  //           admin: currentAccount.address,
-  //         }));
-  //       }
-  //     };
-  //     getInfo();
-  //   }
-  // }, [currentAccount, apiState, keyringState]);
+      console.log("The hash : ", hash.toHex());
+      setReservationMessage("Thanks for your reservation");
+    } catch (error) {
+      console.error("Error sending the transaction", error);
+    }
+  };
 
   return (
     <div className="mt-10 flex flex-wrap justify-between w-[660px]">
@@ -173,7 +167,7 @@ export default function Form({
           <button
             disabled={disabled || loading}
             className="bg-red-600 w-full p-3 text-white font-bold rounded disabled:bg-gray-300"
-            // onClick={handleClick}
+            onClick={handleClick}
           >
             {loading ? (
               <CircularProgress color="inherit" />
@@ -181,6 +175,11 @@ export default function Form({
               "Complete reservation"
             )}
           </button>
+          {reservationMessage && (
+            <div className="mt-4">
+              <p className="text-reg">{reservationMessage}</p>
+            </div>
+          )}
           <p className="mt-4 text-sm">
             By clicking “Complete reservation” you agree to the OpenTable Terms
             of Use and Privacy Policy. Standard text message rates may apply.
